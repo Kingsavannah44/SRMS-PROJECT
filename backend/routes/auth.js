@@ -4,9 +4,6 @@ const User = require("../models/User");
 
 const router = express.Router();
 
-// @route   POST /api/auth/register
-// @desc    Register user
-// @access  Public
 router.post("/register", async (req, res) => {
   const { username, password } = req.body;
 
@@ -40,20 +37,20 @@ router.post("/register", async (req, res) => {
   }
 });
 
-// @route   POST /api/auth/login
-// @desc    Authenticate user & get token
-// @access  Public
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
+  console.log('Login attempt:', { username, password: '***' });
 
   try {
     let user = await User.findOne({ username });
     if (!user) {
+      console.log('User not found:', username);
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
+      console.log('Password mismatch for user:', username);
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
@@ -69,11 +66,12 @@ router.post("/login", async (req, res) => {
       { expiresIn: "1h" },
       (err, token) => {
         if (err) throw err;
+        console.log('Login successful for user:', username);
         res.json({ token });
       }
     );
   } catch (err) {
-    console.error(err.message);
+    console.error('Login error:', err.message);
     res.status(500).send("Server error");
   }
 });

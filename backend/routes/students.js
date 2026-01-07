@@ -4,9 +4,6 @@ const auth = require("../middleware/auth");
 
 const router = express.Router();
 
-// @route   GET /api/students
-// @desc    Get all students
-// @access  Private
 router.get("/", auth, async (req, res) => {
   try {
     const students = await Student.find();
@@ -17,9 +14,6 @@ router.get("/", auth, async (req, res) => {
   }
 });
 
-// @route   GET /api/students/search
-// @desc    Search students
-// @access  Private
 router.get("/search", auth, async (req, res) => {
   const { q } = req.query;
   try {
@@ -37,9 +31,6 @@ router.get("/search", auth, async (req, res) => {
   }
 });
 
-// @route   POST /api/students
-// @desc    Add a student
-// @access  Private
 router.post("/", auth, async (req, res) => {
   const { name, email, age, course } = req.body;
   try {
@@ -57,9 +48,6 @@ router.post("/", auth, async (req, res) => {
   }
 });
 
-// @route   PUT /api/students/:id
-// @desc    Update a student
-// @access  Private
 router.put("/:id", auth, async (req, res) => {
   const { name, email, age, course } = req.body;
   try {
@@ -79,16 +67,13 @@ router.put("/:id", auth, async (req, res) => {
   }
 });
 
-// @route   DELETE /api/students/:id
-// @desc    Delete a student
-// @access  Private
 router.delete("/:id", auth, async (req, res) => {
   try {
     let student = await Student.findById(req.params.id);
     if (!student) {
       return res.status(404).json({ message: "Student not found" });
     }
-    await Student.findByIdAndRemove(req.params.id);
+    await Student.findByIdAndDelete(req.params.id);
     res.json({ message: "Student removed" });
   } catch (err) {
     console.error(err.message);
